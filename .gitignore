@@ -3,3 +3,8 @@
 .mvn
 
 data.env
+
+target
+customer/target
+fraud/target
+eureka-server/target
