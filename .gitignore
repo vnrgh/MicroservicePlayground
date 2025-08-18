@@ -4,7 +4,9 @@
 
 data.env
 
-target
-customer/target
-fraud/target
-eureka-server/target
+target/
+customer/target/
+fraud/target/
+eureka-server/target/
+clients/target/
+notification/target/

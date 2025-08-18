@@ -1,10 +1,19 @@
 package com.vnrgh.customer;
 
+import com.vnrgh.clients.fraud.FraudCheckResponse;
+import com.vnrgh.clients.fraud.FraudClient;
+import com.vnrgh.clients.notification.NotificationClient;
+import com.vnrgh.clients.notification.NotificationRequest;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Service
-public record CustomerService(CustomerRepository repository, RestTemplate restTemplate) {
+@AllArgsConstructor
+public class CustomerService {
+    private final CustomerRepository repository;
+    private final NotificationClient notificationClient;
+    private final FraudClient fraudClient;
+
     public void registerCustomer(CustomerRegistrationRequest request) {
         Customer customer = Customer.builder()
                 .firstName(request.firstName())
@@ -13,13 +22,20 @@ public record CustomerService(CustomerRepository repository, RestTemplate restTe
                 .build();
         repository.saveAndFlush(customer);
 
-        FraudCheckResponse fraudCheckResponse = restTemplate.getForObject(
-            "http://FRAUD/api/v1/fraud-check/{customerId}",
-                FraudCheckResponse.class,
-                customer.getId());
+        FraudCheckResponse fraudCheckResponse = fraudClient.isFraudster(customer.getId());
 
         if (fraudCheckResponse.isFraudster()) {
             throw new IllegalStateException("fraudster");
         }
+
+        notificationClient.sendMessage(
+                new NotificationRequest(
+                customer.getId(),
+                customer.getFirstName(),
+                customer.getEmail(),
+                String.format("Hi %s, welcome to OrderService Project!",
+                        customer.getFirstName())
+                )
+        );
     }
 }
