@@ -1,5 +1,6 @@
 package com.vnrgh.customer;
 
+import com.vnrgh.amqp.RabbitMQMessageProducer;
 import com.vnrgh.clients.fraud.FraudCheckResponse;
 import com.vnrgh.clients.fraud.FraudClient;
 import com.vnrgh.clients.notification.NotificationClient;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class CustomerService {
     private final CustomerRepository repository;
-    private final NotificationClient notificationClient;
+    private final RabbitMQMessageProducer rabbitMQMessageProducer;
     private final FraudClient fraudClient;
 
     public void registerCustomer(CustomerRegistrationRequest request) {
@@ -28,14 +29,17 @@ public class CustomerService {
             throw new IllegalStateException("fraudster");
         }
 
-        notificationClient.sendMessage(
-                new NotificationRequest(
+        NotificationRequest notificationRequest = new NotificationRequest(
                 customer.getId(),
                 customer.getFirstName(),
                 customer.getEmail(),
                 String.format("Hi %s, welcome to OrderService Project!",
-                        customer.getFirstName())
-                )
-        );
+                        customer.getFirstName()));
+
+
+        rabbitMQMessageProducer.publish(
+                notificationRequest,
+                "internal.exchange",
+                "internal.notification.routing-key");
     }
 }

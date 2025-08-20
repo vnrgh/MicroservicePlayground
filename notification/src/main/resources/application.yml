@@ -16,6 +16,8 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
+  rabbitmq:
+    addresses: localhost:5672
 eureka:
   client:
     service-url:
@@ -26,3 +28,11 @@ management:
   zipkin:
     tracing:
       endpoint: http://localhost:9411/api/v2/spans
+
+rabbitmq:
+  exchanges:
+    internal: internal.exchange
+  queue:
+    notification: notification.queue
+  routing-keys:
+    internal-notification: internal.notification.routing-key
