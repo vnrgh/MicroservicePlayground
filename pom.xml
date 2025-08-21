@@ -29,6 +29,7 @@
         <spring.boot.maven.plugin.version>3.5.3</spring.boot.maven.plugin.version>
         <spring.boot.dependencies.version>3.5.3</spring.boot.dependencies.version>
         <spring-cloud.version>2025.0.0</spring-cloud.version>
+        <image>vnrghdocker/${project.artifactId}:${project.version}</image>
     </properties>
 
   <dependencyManagement>
@@ -69,11 +70,62 @@
     <pluginManagement>
         <plugins>
             <plugin>
-                <groupId>com.springframework.boot</groupId>
+                <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring.boot.maven.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.4.6</version>
+                <configuration>
+                    <from>
+                        <image>eclipse-temurin:21</image>
+                        <platforms>
+                            <platform>
+                                <architecture>arm64</architecture>
+                                <os>linux</os>
+                            </platform>
+                            <platform>
+                                <architecture>amd64</architecture>
+                                <os>linux</os>
+                            </platform>
+                        </platforms>
+                    </from>
+                    <to>
+                        <tags>
+                            <tag>latest</tag>
+                        </tags>
+                    </to>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </pluginManagement>
+      <plugins>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>3.13.0</version>
+              <configuration>
+                  <source>21</source>
+                  <target>21</target>
+              </configuration>
+          </plugin>
+      </plugins>
   </build>
 </project>
