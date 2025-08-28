@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a personal project designed to explore and learn microservices architecture using Spring Boot, Kafka, and PostgreSQL. The project simulates a basic order management system with multiple independent services communicating through REST APIs and Kafka messaging.
+This is a personal project designed to explore and learn microservices architecture using Spring Boot, Kafka, and PostgreSQL. The project simulates a basic registration system with multiple independent services communicating through REST APIs and Kafka messaging.
 
 ## Services
 
