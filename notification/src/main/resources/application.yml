@@ -16,8 +16,17 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
-  rabbitmq:
-    addresses: localhost:5672
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: notification-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
 eureka:
   client:
     service-url:
@@ -28,11 +37,3 @@ management:
   zipkin:
     tracing:
       endpoint: http://localhost:9411/api/v2/spans
-
-rabbitmq:
-  exchanges:
-    internal: internal.exchange
-  queue:
-    notification: notification.queue
-  routing-keys:
-    internal-notification: internal.notification.routing-key

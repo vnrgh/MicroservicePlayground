@@ -1,9 +1,7 @@
 package com.vnrgh.customer;
 
-import com.vnrgh.amqp.RabbitMQMessageProducer;
 import com.vnrgh.clients.fraud.FraudCheckResponse;
 import com.vnrgh.clients.fraud.FraudClient;
-import com.vnrgh.clients.notification.NotificationClient;
 import com.vnrgh.clients.notification.NotificationRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,7 +10,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class CustomerService {
     private final CustomerRepository repository;
-    private final RabbitMQMessageProducer rabbitMQMessageProducer;
+    private final KafkaMessageProducer kafkaMessageProducer;
     private final FraudClient fraudClient;
 
     public void registerCustomer(CustomerRegistrationRequest request) {
@@ -36,10 +34,6 @@ public class CustomerService {
                 String.format("Hi %s, welcome to OrderService Project!",
                         customer.getFirstName()));
 
-
-        rabbitMQMessageProducer.publish(
-                notificationRequest,
-                "internal.exchange",
-                "internal.notification.routing-key");
+        kafkaMessageProducer.sendNotification(notificationRequest);
     }
 }

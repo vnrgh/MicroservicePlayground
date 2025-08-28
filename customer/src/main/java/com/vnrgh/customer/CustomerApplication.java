@@ -6,8 +6,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication(
         scanBasePackages = {
-                "com.vnrgh.customer",
-                "com.vnrgh.amqp"
+                "com.vnrgh.customer"
         }
 )
 @EnableFeignClients(basePackages = "com.vnrgh.clients")
