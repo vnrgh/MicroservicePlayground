@@ -1,4 +1,4 @@
-package com.vnrgh.customer;
+package com.vnrgh.customer.kafka;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.context.annotation.Bean;

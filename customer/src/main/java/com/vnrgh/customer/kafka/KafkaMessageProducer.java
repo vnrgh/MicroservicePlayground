@@ -1,4 +1,4 @@
-package com.vnrgh.customer;
+package com.vnrgh.customer.kafka;
 
 import com.vnrgh.clients.notification.NotificationRequest;
 import org.springframework.kafka.core.KafkaTemplate;
