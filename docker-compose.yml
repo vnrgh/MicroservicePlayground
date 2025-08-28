@@ -41,6 +41,7 @@ services:
     container_name: kafka
     ports:
       - "9092:9092"
+      - "29092:29092"
     environment:
       - KAFKA_KRAFT_MODE=true
       - KAFKA_PROCESS_ROLES=broker,controller

@@ -3,6 +3,7 @@ package com.vnrgh.customer;
 import com.vnrgh.clients.fraud.FraudCheckResponse;
 import com.vnrgh.clients.fraud.FraudClient;
 import com.vnrgh.clients.notification.NotificationRequest;
+import com.vnrgh.customer.kafka.KafkaMessageProducer;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
