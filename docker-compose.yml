@@ -36,12 +36,26 @@ services:
     networks:
       - spring
 
-  rabbitmq:
-    image: rabbitmq:4.1.3-management-alpine
-    container_name: rabbitmq
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: kafka
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "9092:9092"
+    environment:
+      - KAFKA_KRAFT_MODE=true
+      - KAFKA_PROCESS_ROLES=broker,controller
+      - KAFKA_NODE_ID=1
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      - KAFKA_LISTENERS=PLAINTEXT_INTERNAL://0.0.0.0:9092,PLAINTEXT_EXTERNAL://0.0.0.0:29092,CONTROLLER://0.0.0.0:9093
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT_INTERNAL://kafka:9092,PLAINTEXT_EXTERNAL://localhost:29092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT_INTERNAL:PLAINTEXT,PLAINTEXT_EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT_INTERNAL
+      - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_LOG_DIRS=/var/lib/kafka/data
+      - CLUSTER_ID=Qhlk0PVNQhipKW4JHRI64g
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1
     networks:
       - spring
 
@@ -56,6 +70,12 @@ services:
       - spring
     depends_on:
       - zipkin
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   api-gateway:
     image: vnrghdocker/api-gateway:latest
@@ -67,8 +87,10 @@ services:
     networks:
       - spring
     depends_on:
-      - zipkin
-      - eureka-server
+      eureka-server:
+        condition: service_healthy
+      zipkin:
+        condition: service_started
 
   customer:
     image: vnrghdocker/customer:latest
@@ -81,10 +103,14 @@ services:
       - spring
       - postgres_micro
     depends_on:
-      - eureka-server
-      - zipkin
-      - postgres_micro
-      - rabbitmq
+      eureka-server:
+        condition: service_healthy
+      zipkin:
+        condition: service_started
+      postgres_micro:
+        condition: service_started
+      kafka:
+        condition: service_started
 
   fraud:
     image: vnrghdocker/fraud:latest
@@ -97,10 +123,14 @@ services:
       - spring
       - postgres_micro
     depends_on:
-      - eureka-server
-      - zipkin
-      - postgres_micro
-      - rabbitmq
+      eureka-server:
+        condition: service_healthy
+      zipkin:
+        condition: service_started
+      postgres_micro:
+        condition: service_started
+      kafka:
+        condition: service_started
 
   notification:
     image: vnrghdocker/notification:latest
@@ -113,10 +143,14 @@ services:
       - spring
       - postgres_micro
     depends_on:
-      - eureka-server
-      - zipkin
-      - postgres_micro
-      - rabbitmq
+      eureka-server:
+        condition: service_healthy
+      zipkin:
+        condition: service_started
+      postgres_micro:
+        condition: service_started
+      kafka:
+        condition: service_started
 
 networks:
   postgres_micro:

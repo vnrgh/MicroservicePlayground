@@ -16,8 +16,13 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
-  rabbitmq:
-    addresses: rabbitmq:5672
+
+  kafka:
+    bootstrap-servers: kafka:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
 eureka:
   client:
     service-url:

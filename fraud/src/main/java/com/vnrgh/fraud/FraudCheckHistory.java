@@ -1,7 +1,6 @@
 package com.vnrgh.fraud;
 
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,7 +23,7 @@ public class FraudCheckHistory {
             strategy = GenerationType.SEQUENCE,
             generator = "fraud_id_sequence"
     )
-    private Integer id; //todo WHY does he use wrappers instead of primitives?
+    private Integer id;
     private Integer customerId;
     private Boolean isFraudster;
     private LocalDateTime createdAt;
